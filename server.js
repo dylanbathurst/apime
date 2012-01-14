@@ -1,7 +1,3 @@
-
-require.paths.unshift(__dirname);
-require.paths.unshift(__dirname + '/app');
-
 var express = require('express');
 
 var app = module.exports = express.createServer();
@@ -25,7 +21,7 @@ app.configure('production', function(){
 
 // Routes
 ['root', 'user'].forEach(function (name) {
-  app.use(require('controllers/' + name));
+  app.use(require(__dirname + '/app/controllers/' + name));
 });
 
 app.listen(8000);

@@ -1,7 +1,7 @@
 var express  = require('express');
-var userView = require('views/userView');
+var userView = require(__dirname + '/../views/userView');
 
-var User = require('models/user');
+var User = require(__dirname + '/../models/user');
 
 var app = module.exports = express.createServer();
 

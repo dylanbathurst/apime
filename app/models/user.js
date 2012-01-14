@@ -1,4 +1,4 @@
-var httpRequester = require('lib/httpRequester'),
+var httpRequester = require(__dirname + '/../../lib/httpRequester'),
     async         = require('async');
 
 var User = exports;
