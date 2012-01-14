@@ -1,9 +1,10 @@
+require('./config');
+
 var express = require('express');
 
-var app = module.exports = express.createServer();
+var app = exports.http = express.createServer();
 
 // Configuration
-
 app.configure(function(){
   app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.bodyParser());
@@ -24,4 +25,3 @@ app.configure('production', function(){
   app.use(require(__dirname + '/app/controllers/' + name));
 });
 
-app.listen(8000);
