@@ -15,6 +15,16 @@ app.get('/?:username', function (req, res, next) {
   });
 });
 
+app.get('/?:username/info', function (req, res, next) {
+  var username = req.params.username;
+
+  User.getUserInfo(username, function (err, user) {
+    if (err) throw err;
+
+    res.json(user);
+  });
+});
+
 app.post('/users/:username', function (req, res, next) {
   var username = req.params.username,
       body = req.body;

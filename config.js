@@ -15,3 +15,5 @@ set('PORT', 8000);
 // The environment type
 set('NODE_ENV', 'development');
 
+// The API to use
+set('DB', '127.0.0.1');

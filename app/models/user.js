@@ -1,27 +1,11 @@
 var httpRequester = require(__dirname + '/../../lib/httpRequester'),
-    /* cradle        = require('cradle'), */
+    cradle        = require('cradle'),
     async         = require('async');
-
-
-// var c = new(cradle.Connection)('dylan.couchone.com', 5984, {
-//   cache: true,
-//   raw: false
-// });
-// 
-// var db = c.database('apime');
-// var id = 'f14c2c7fef21f7e5623b16207a000a9d';
-// 
-// var newness = {'dool': 'garl'};
-// 
-// db.merge(id, newness, function (err, res) {
-//   if (err) throw err;
-// 
-//   console.log(res);
-// });
 
 var User = exports;
 
 exports.getPublicUserProfileByName = getPublicUserProfileByName;
+exports.getUserInfo = getUserInfo;
 exports.getGravatarProfile = getGravatarProfile;
 exports.getUserBioByName = getUserBioByName;
 
@@ -31,6 +15,35 @@ function getPublicUserFromDatbaseByName(username, callback) {}
 
 function createNewUserByName(username, callback) {}
 
+function getUserInfo(username, callback) {
+  var c = new(cradle.Connection)(process.env.DB, 5984, {
+    cache: true,
+    raw: false
+  });
+
+  var dbUsers = c.database('apime-users');
+  var dbTwitter = c.database('apime-twitter');
+  var dbFacebook = c.database('apime-facebook');
+  var id = '0a1ce95bffd68efeb40f57b98c0007e1';
+
+  async.series([
+    dbUsers.get.bind(dbUsers, id),
+  ], function (err, user) {
+    var userId = user[0].userId;
+
+    dbTwitter.get(userId, function (err, twitterInfo) {
+      var mix = user.concat(twitterInfo);
+
+      callback(null, mix);
+    });
+  });
+
+  // db.get(id, function (err, res) {
+  //   if (err) throw err;
+
+  //   callback(null, res);
+  // });
+}
 
 function getPublicUserProfileByName(username, callback) {
   async.parallel({
@@ -38,7 +51,6 @@ function getPublicUserProfileByName(username, callback) {
 
     twitter: User.getUserBioByName.bind(User, username)
   }, callback);
-
 }
 
 
