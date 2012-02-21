@@ -1,10 +1,9 @@
 {
   "name": "apime",
   "version": "0.0.1",
-  "private": true,
   "dependencies": {
     "express": "2.5.4",
-    "async": "0.1.x",
+    "async": "0.1.15",
     "mu2": "0.5.7",
     "forever": "0.8.4",
     "cradle": "0.2.5"
