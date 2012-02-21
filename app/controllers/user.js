@@ -9,7 +9,7 @@ app.get('/?:username', function (req, res, next) {
   var username = req.params.username;
 
   User.getPublicUserProfileByName(username, function (err, bundle) {
-    if (err) throw err;
+    if (err) return next(err);
 
     switch (bundle.found) {
       case 'twitter':
@@ -17,6 +17,9 @@ app.get('/?:username', function (req, res, next) {
       break;
       case 'gravatar':
         var out = userView.gravatarOptions(bundle.gravatar.entry[0]);
+      break;
+      default:
+        return next();
       break;
     }
 
@@ -29,7 +32,7 @@ app.get('/?:username/edit', function (req, res, next) {
   var username = req.params.username;
 
   User.getPublicUserProfileByName(username, function (err, bundle) {
-    if (err) throw err;
+    if (err) return next(err);
 
     var out = userView.formatUserProfile({username: username}, bundle);
     res.writeStream(out);

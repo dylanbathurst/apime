@@ -44,9 +44,11 @@ function getPublicUserProfileByName(username, callback) {
     if (err) return callback(err);
 
     if (bundle.twitter.errors) {
-      if (bundle.gravatar) {
+      if (bundle.gravatar != 'User not found') {
         bundle.found = 'gravatar';
         return callback(null, bundle);
+      } else {
+        return callback({error: 'User not found'});
       }
     } else {
       bundle.found = 'twitter';

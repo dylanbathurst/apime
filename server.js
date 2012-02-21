@@ -35,3 +35,6 @@ app.configure('production', function(){
   app.use(require(__dirname + '/app/controllers/' + name));
 });
 
+// Add the error handlers
+require(__dirname + '/app/controllers/errors')(app);
+
