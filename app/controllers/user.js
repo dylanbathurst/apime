@@ -13,7 +13,6 @@ app.get('/?:username', function (req, res, next) {
 
     switch (bundle.found) {
       case 'twitter':
-        console.log(bundle);
         var out = userView.twitterOptions(bundle.twitter[0]);
       break;
       case 'gravatar':
