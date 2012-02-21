@@ -1,21 +1,36 @@
-exports.formatUserObject = formatUserObject;
+var response = require('../../lib/response');
 
-function formatUserObject(bundle) {
-  var view = {},
-      twitter = bundle.twitter[0],
-      gravatar = bundle.gravatar.entry[0];
+exports.formatUserProfile = formatUserProfile;
+exports.twitterOptions    = twitterOptions;
+exports.gravatarOptions   = gravatarOptions;
 
-  view.name = twitter.name
-  view.usernames = [twitter.screen_name, 'Dylan B.'];
-  view.avatars = [{twitter: twitter.profile_image_url}, {gravatar: gravatar.thumbnailUrl}];
-  view.bio = twitter.description;
-  view.website = twitter.url;
-  view.socialnetworks = [
-    {website: 'Twitter', url: 'http://www.twitter.com/' + twitter.screen_name},
-    {website: 'Facebook', url: 'http://www.facebook.com/' + twitter.screen_name},
-    {website: 'Foursquare', url: 'http://foursquare.com/' + twitter.screen_name},
-    {website: 'LinkedIn', url: 'http://www.linkedin.com/in/' + twitter.screen_name}
-  ];
 
-  return view;
+function formatUserProfile (view, bundle) {
+  view.twitter = twitterOptions(bundle.twitter[0]);
+  view.gravatar = gravatarOptions(bundle.gravatar.entry[0]);
+
+  return response.template('user', view);
+}
+
+
+function twitterOptions(bundle) {
+  var options = {};
+
+  options.username = bundle.screen_name;
+  options.bio = bundle.description;
+  options.photo = bundle.profile_image_url;
+  options.website = bundle.url;
+
+  return options;
+}
+
+function gravatarOptions(bundle) {
+  var options = {};
+
+  options.username = bundle.preferredUsername;
+  options.bio = bundle.aboutMe;
+  options.photo = bundle.thumbnailUrl;
+  options.website = bundle.urls;
+
+  return options;
 }

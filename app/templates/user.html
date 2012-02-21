@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+
+<title></title>
+</head>
+<body>
+<h1>{{username}}'s API</h1>
+
+<h2>Customize Your API:</h2>
+
+<form action="/{{username}}/edit" method="POST" id="editTwitter">
+{{#twitter}}
+  <h3>Twitter Profile</h3>
+  <p>
+    <button>Default Username</button> {{username}}
+  </p>
+
+  <p>
+    <button>Default Bio</button> {{bio}}
+  </p>
+
+  <p>
+    <button>Default Image</button>
+    <img src="{{photo}}" />
+  </p>
+
+  <p>
+    <button>Default Website</button> <a href="{{website}}">{{website}}</a>
+  </p>
+{{/twitter}}
+</form>
+
+<form action="/{{username}}/edit" method="POST" id="editGravatar">
+{{#gravatar}}
+  <h3>Twitter Profile</h3>
+  <p>
+    <button>Default Username</button> {{username}}
+  </p>
+
+  <p>
+    <button>Default Bio</button> {{bio}}
+  </p>
+
+  <p>
+    <button>Default Image</button>
+    <img src="{{photo}}" />
+  </p>
+
+  <p>
+    {{#website}}
+    <button>Default Website</button> <a href="{{value}}">{{value}}</a>
+    {{/website}}
+  </p>
+{{/gravatar}}
+</form>
+
+</body>
+</html>

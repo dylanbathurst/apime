@@ -8,30 +8,31 @@ var app = module.exports = express.createServer();
 app.get('/?:username', function (req, res, next) {
   var username = req.params.username;
 
-  User.getPublicUserProfileByName(username, function (err, user) {
+  User.getPublicUserProfileByName(username, function (err, bundle) {
     if (err) throw err;
 
-    res.json(userView.formatUserObject(user));
+    switch (bundle.found) {
+      case 'twitter':
+        console.log(bundle);
+        var out = userView.twitterOptions(bundle.twitter[0]);
+      break;
+      case 'gravatar':
+        var out = userView.gravatarOptions(bundle.gravatar.entry[0]);
+      break;
+    }
+
+    res.json(out);
   });
 });
 
-app.get('/?:username/info', function (req, res, next) {
+
+app.get('/?:username/edit', function (req, res, next) {
   var username = req.params.username;
 
-  User.getUserInfo(username, function (err, user) {
+  User.getPublicUserProfileByName(username, function (err, bundle) {
     if (err) throw err;
 
-    res.json(user);
-  });
-});
-
-app.post('/users/:username', function (req, res, next) {
-  var username = req.params.username,
-      body = req.body;
-
-  User.createNewUserByName(username, body, function (err, response) {
-    if (err) throw err;
-
-    res.json(response);
+    var out = userView.formatUserProfile({username: username}, bundle);
+    res.writeStream(out);
   });
 });

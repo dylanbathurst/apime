@@ -1,60 +1,62 @@
+var db;
+
 var httpRequester = require(__dirname + '/../../lib/httpRequester'),
     cradle        = require('cradle'),
     async         = require('async');
 
 var User = exports;
 
+exports.setDatabase = setDatabase;
+exports.findByUserId = findByUserId;
+exports.findByUserName = findByUserName;
 exports.getPublicUserProfileByName = getPublicUserProfileByName;
-exports.getUserInfo = getUserInfo;
-exports.getGravatarProfile = getGravatarProfile;
-exports.getUserBioByName = getUserBioByName;
+exports.getGravatarPublicProfile = getGravatarPublicProfile;
+exports.getTwitterPublicProfile = getTwitterPublicProfile;
 
-
-function getPublicUserFromDatbaseByName(username, callback) {}
-
-
-function createNewUserByName(username, callback) {}
-
-function getUserInfo(username, callback) {
-  var c = new(cradle.Connection)(process.env.DB, 5984, {
-    cache: true,
-    raw: false
-  });
-
-  var dbUsers = c.database('apime-users');
-  var dbTwitter = c.database('apime-twitter');
-  var dbFacebook = c.database('apime-facebook');
-  var id = '0a1ce95bffd68efeb40f57b98c0007e1';
-
-  async.series([
-    dbUsers.get.bind(dbUsers, id),
-  ], function (err, user) {
-    var userId = user[0].userId;
-
-    dbTwitter.get(userId, function (err, twitterInfo) {
-      var mix = user.concat(twitterInfo);
-
-      callback(null, mix);
-    });
-  });
-
-  // db.get(id, function (err, res) {
-  //   if (err) throw err;
-
-  //   callback(null, res);
-  // });
+function setDatabase(database) {
+  db = database;
+  db.name = function (dbName) {
+    return db.database(dbName);
+  };
 }
+
+function findByUserId(id, callback) {
+  db.get(id, callback);
+}
+
+
+function findByUserName(username, callback) {
+  db.name('apime-users')
+    .view('user/byUsername', {key: username}, function (err, user) {
+    if (err) return callback(err);
+
+    callback(null, user.rows[0].value);
+  });
+}
+
 
 function getPublicUserProfileByName(username, callback) {
   async.parallel({
-    gravatar: User.getGravatarProfile.bind(User, username),
+    twitter: User.getTwitterPublicProfile.bind(User, username),
 
-    twitter: User.getUserBioByName.bind(User, username)
-  }, callback);
+    gravatar: User.getGravatarPublicProfile.bind(User, username)
+  }, function (err, bundle) {
+    if (err) return callback(err);
+
+    if (bundle.twitter.errors) {
+      if (bundle.gravatar) {
+        bundle.found = 'gravatar';
+        return callback(null, bundle);
+      }
+    } else {
+      bundle.found = 'twitter';
+      callback(null, bundle);
+    }
+  });
 }
 
 
-function getGravatarProfile(username, callback) {
+function getGravatarPublicProfile(username, callback) {
   var path = '/' + username + '.json';
 
   httpRequester.get({
@@ -64,7 +66,7 @@ function getGravatarProfile(username, callback) {
 }
 
 
-function getUserBioByName(username, callback) {
+function getTwitterPublicProfile(username, callback) {
   var path = '/1/users/lookup.json?screen_name=' + username;
 
   httpRequester.get({
