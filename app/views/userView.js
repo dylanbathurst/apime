@@ -16,7 +16,7 @@ function formatUserProfile (view, bundle) {
 function twitterOptions(bundle) {
   var options = {};
 
-  options.username = bundle.screen_name;
+  options.name = bundle.screen_name;
   options.bio = bundle.description;
   options.photo = bundle.profile_image_url;
   options.website = bundle.url;
@@ -27,7 +27,7 @@ function twitterOptions(bundle) {
 function gravatarOptions(bundle) {
   var options = {};
 
-  options.username = bundle.preferredUsername;
+  options.name = bundle.preferredUsername;
   options.bio = bundle.aboutMe;
   options.photo = bundle.thumbnailUrl;
   options.website = bundle.urls;
